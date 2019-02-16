@@ -24,19 +24,54 @@ let setWidth = Int(screenSize.width)
 let setHeight = Int(screenSize.width)
 
 let startHeight = 50
+var verifyRows = true
+var verifyCols = true
+var verify3x3 = true
 
+//var myArray = [
+//    [" ", " ", " ", " ", " ", " ", " ", " ", " "],
+//    [" ", " ", " ", " ", " ", " ", " ", " ", " "],
+//    [" ", " ", " ", " ", " ", " ", " ", " ", " "],
+//    [" ", " ", " ", " ", " ", " ", " ", " ", " "],
+//    [" ", " ", " ", " ", " ", " ", " ", " ", " "],
+//    [" ", " ", " ", " ", " ", " ", " ", " ", " "],
+//    [" ", " ", " ", " ", " ", " ", " ", " ", " "],
+//    [" ", " ", " ", " ", " ", " ", " ", " ", " "],
+//    [" ", " ", " ", " ", " ", " ", " ", " ", " "]
+//]
+//var myArray = [
+//    ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+//    ["2", "3", "4", "5", "6", "7", "8", "9", "1"],
+//    ["3", "4", "5", "6", "7", "8", "9", "1", "2"],
+//    ["4", "5", "6", "7", "8", "9", "1", "2", "3"],
+//    ["5", "6", "7", "8", "9", "1", "2", "3", "4"],
+//    ["6", "7", "8", "9", "1", "2", "3", "4", "5"],
+//    ["7", "8", "9", "1", "2", "3", "4", "5", "6"],
+//    ["8", "9", "1", "2", "3", "4", "5", "6", "7"],
+//    ["9", "1", "2", "3", "4", "5", "6", "7", "8"]
+//]
+//var myArray = [
+//    ["1", "2", "3", "1", "4", "7", "1", "4", "7"],
+//    ["4", "5", "6", "2", "5", "8", "2", "5", "8"],
+//    ["7", "8", "9", "3", "6", "9", "3", "6", "9"],
+//    ["1", "2", "3", "1", "4", "7", "1", "4", "7"],
+//    ["4", "5", "6", "2", "5", "8", "2", "5", "8"],
+//    ["7", "8", "9", "3", "6", "9", "3", "6", "9"],
+//    ["1", "2", "3", "1", "4", "7", "1", "4", "7"],
+//    ["4", "5", "6", "2", "5", "8", "2", "5", "8"],
+//    ["7", "8", "9", "3", "6", "9", "3", "6", "9"]
+//]
 var myArray = [
-    [" ", " ", " ", " ", " ", " ", " ", " ", " "],
-    [" ", " ", " ", " ", " ", " ", " ", " ", " "],
-    [" ", " ", " ", " ", " ", " ", " ", " ", " "],
-    [" ", " ", " ", " ", " ", " ", " ", " ", " "],
-    [" ", " ", " ", " ", " ", " ", " ", " ", " "],
-    [" ", " ", " ", " ", " ", " ", " ", " ", " "],
-    [" ", " ", " ", " ", " ", " ", " ", " ", " "],
-    [" ", " ", " ", " ", " ", " ", " ", " ", " "],
-    [" ", " ", " ", " ", " ", " ", " ", " ", " "]
+    ["4", "3", "5", "2", "6", "9", "7", "8", "1"],
+    ["6", "8", "2", "5", "7", "1", "4", "9", "3"],
+    ["1", "9", "7", "8", "3", "4", "5", "6", "2"],
+    ["8", "2", "6", "1", "9", "5", "3", "4", "7"],
+    ["3", "7", "4", "6", "8", "2", "9", "1", "5"],
+    ["9", "5", "1", "7", "4", "3", "6", "2", "8"],
+    ["5", "1", "9", "3", "2", "6", "8", "7", "4"],
+    ["2", "4", "8", "9", "5", "7", "1", "3", "6"],
+    ["7", "6", "3", "4", "1", "8", "2", "5", "9"]
 ]
-
 class ViewController: UIViewController
 {
     override func viewDidLoad()
@@ -82,7 +117,7 @@ class ViewController: UIViewController
                 let button = UIButton(frame: CGRect(x: screenSize.width/9*CGFloat(i)+1, y: screenSize.width/9*CGFloat(j) + CGFloat(startHeight) + 1, width: screenSize.width/9-2, height: screenSize.width/9-2))
                 
                 button.backgroundColor = UIColor.white
-                button.setTitle(" ", for: .normal)
+                button.setTitle(myArray[j][i], for: .normal)
                 button.setTitleColor(UIColor.black, for: .normal)
                 button.addTarget(self, action: #selector(buttonAction), for: .touchUpInside)
                 
@@ -106,39 +141,109 @@ class ViewController: UIViewController
     }
     @objc func doVerify(sender: UIButton!)
     {
-        if(true)
+        checkRows()
+        checkCols()
+        check3x3()
+        print(verify3x3)
+        print(verifyRows)
+        print(verifyCols)
+        if(verifyRows && verifyCols && verify3x3)
         {
+            
             sender.setTitle("Verify\n\nValid Solution.", for: .normal)
         }
         else
         {
-            sender.setTitle("Verify\n\nValid Solution.", for: .normal)
+            sender.setTitle("Verify\n\nInvalid Solution.", for: .normal)
         }
-        for i in 0...8
-        {
-            for j in 0...8
-            {
-                print(myArray[j][i] + ", ", terminator:"")
-            }
-            print("\n")
-            
-        }
+//        for i in 0...8
+//        {
+//            for j in 0...8
+//            {
+//                print(myArray[j][i] + ", ", terminator:"")
+//            }
+//            print("\n")
+//        }
+        verifyRows = true
+        verifyCols = true
+        verify3x3 = true
     }
     func checkRows()
     {
-        for i in 0...8
+        for j in 0...8
         {
-            
+            var tempArray = [0,0,0,0,0,0,0,0,0]
+            for i in 0...8
+            {
+                tempArray[i] = Int(myArray[i][j])!
+            }
+            tempArray.sort()
+            for i in 0...8
+            {
+                if(tempArray[i] != i+1)
+                {
+                    verifyRows = false
+                }
+            }
         }
     }
     func checkCols()
     {
-        
+        for j in 0...8
+        {
+            var tempArray = [0,0,0,0,0,0,0,0,0]
+            for i in 0...8
+            {
+                tempArray[i] = Int(myArray[j][i])!
+            }
+            tempArray.sort()
+            for i in 0...8
+            {
+                if(tempArray[i] != i+1)
+                {
+                    verifyCols = false
+                }
+            }
+        }
     }
     func check3x3()
     {
-        
+        for m in 0...2
+        {
+            for j in 0...2
+            {
+                var tempArray = [0,0,0,0,0,0,0,0,0]
+                var count = 0
+                for i in 0...2//(0 + 3*m)...(2 + 3*m)
+                {
+                    for k in 0...2//(0 + 3*j)...(2 + 3*j)
+                    {
+                        tempArray[count] = Int(myArray[k + 3*j][i + 3*m])!
+                        count+=1
+                    }
+                }
+//                for f in 0...8
+//                {
+//                    print(String(tempArray[f]) + ", ", terminator:"")
+//                }
+//                print()
+                tempArray.sort()
+                for f in 0...8
+                {
+//                    print(String(tempArray[f]) + ", ", terminator:"")
+                    if(tempArray[f] != f+1)
+                    {
+                        verify3x3 = false
+//                        print("m: " + String(m))
+//                        print("j: " + String(j))
+                    }
+                }
+//                print()
+//                print()
+            }
+        }
     }
+    
     @objc func buttonAction(sender: UIButton!)
     {
         
