@@ -284,9 +284,33 @@ class ViewController: UIViewController
         checkBlank()
         if(arrayFull == true)
         {
-            checkRows()
-            checkCols()
-            check3x3()
+            // Thread code version attempt
+            let rowThread = Thread
+            {
+                self.checkRows()
+            }
+            let colThread = Thread
+            {
+                self.checkCols()
+            }
+            let threeThread = Thread
+            {
+                self.check3x3()
+            }
+            rowThread.start()
+            colThread.start()
+            threeThread.start()
+            while(!(rowThread.isFinished&&colThread.isFinished&&threeThread.isFinished))
+            {
+                //wait until finished
+                print("Still calculating")
+            }
+            print("Done Calculating")
+            
+//            Non-thread code
+//            checkRows()
+//            checkCols()
+//            check3x3()
             print(verify3x3)
             print(verifyRows)
             print(verifyCols)
