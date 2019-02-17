@@ -23,7 +23,7 @@ let screenSize: CGRect = UIScreen.main.bounds
 let setWidth = Int(screenSize.width)
 let setHeight = Int(screenSize.width)
 
-let startHeight = 50
+let startHeight = 100
 var verifyRows = true
 var verifyCols = true
 var verify3x3 = true
@@ -80,7 +80,12 @@ var myArray = [
 class ViewController: UIViewController
 {
     var buttonsArray = [UIButton]()
-
+    let resetButton = UIButton(frame: CGRect(x: screenSize.width/2, y: screenSize.height*3/4, width: screenSize.width/2, height: screenSize.width/8))
+    let solveButton = UIButton(frame: CGRect(x: screenSize.width/2, y: screenSize.height*3/4 + screenSize.width/8, width: screenSize.width/2, height: screenSize.width/8))
+    let verifyButton = UIButton(frame: CGRect(x: screenSize.width/2, y: screenSize.height*3/4 + screenSize.width/4, width: screenSize.width/2, height: screenSize.width/8))
+    let sudoLabel = UILabel(frame: CGRect(x: 0, y: 0, width: Int(screenSize.width), height: startHeight))
+    let alertLabel = UILabel(frame: CGRect(x: 0, y: Int(screenSize.height*3/4), width: Int(screenSize.width/2), height: Int(screenSize.width*3/8)))
+    
     override func viewDidLoad()
     {
         super.viewDidLoad()
@@ -122,7 +127,7 @@ class ViewController: UIViewController
         {
             for j in 0...8
             {
-                let button = UIButton(frame: CGRect(x: screenSize.width/9*CGFloat(i)+1, y: screenSize.width/9*CGFloat(j) + CGFloat(startHeight) + 1, width: screenSize.width/9-2, height: screenSize.width/9-2))
+                let button = UIButton(frame: CGRect(x: screenSize.width/9*CGFloat(i)+1, y: screenSize.width/9*CGFloat(j) + CGFloat(startHeight) + 1, width: screenSize.width/9-1, height: screenSize.width/9-1))
                 
                 button.backgroundColor = UIColor.white
                 button.setTitle(myArray[j][i], for: .normal)
@@ -133,8 +138,25 @@ class ViewController: UIViewController
                 self.buttonsArray.append(button)
             }
         }
+        sudoLabel.backgroundColor = UIColor.white
+        sudoLabel.text = "sudō"
+        sudoLabel.textAlignment = NSTextAlignment.center
+        sudoLabel.textColor = UIColor.black
+        sudoLabel.backgroundColor = .clear
+        sudoLabel.layer.cornerRadius = 5
+        sudoLabel.layer.borderWidth = 1
+        sudoLabel.layer.borderColor = UIColor.black.cgColor
+        self.view.addSubview(sudoLabel)
         
-        let resetButton = UIButton(frame: CGRect(x: screenSize.width/2, y: screenSize.height*3/4-screenSize.width/8, width: screenSize.width/2, height: screenSize.width/8))
+        alertLabel.backgroundColor = UIColor.white
+        alertLabel.text = ""
+        alertLabel.textAlignment = NSTextAlignment.center
+        alertLabel.textColor = UIColor.black
+        alertLabel.backgroundColor = .clear
+        alertLabel.layer.cornerRadius = 5
+        alertLabel.layer.borderWidth = 1
+        alertLabel.layer.borderColor = UIColor.black.cgColor
+        self.view.addSubview(alertLabel)
         
         resetButton.backgroundColor = UIColor.white
         resetButton.setTitle("Reset", for: .normal)
@@ -147,9 +169,12 @@ class ViewController: UIViewController
         resetButton.contentHorizontalAlignment = UIControl.ContentHorizontalAlignment.center
         resetButton.contentVerticalAlignment = UIControl.ContentVerticalAlignment.top
         resetButton.titleLabel?.textAlignment = .center
+        resetButton.backgroundColor = UIColor.red
+        resetButton.backgroundColor = .clear
+        resetButton.layer.cornerRadius = 5
+        resetButton.layer.borderWidth = 1
+        resetButton.layer.borderColor = UIColor.black.cgColor
         self.view.addSubview(resetButton)
-        
-        let solveButton = UIButton(frame: CGRect(x: screenSize.width/2, y: screenSize.height*3/4, width: screenSize.width/2, height: screenSize.width/8))
         
         solveButton.backgroundColor = UIColor.white
         solveButton.setTitle("Solve", for: .normal)
@@ -162,9 +187,12 @@ class ViewController: UIViewController
         solveButton.contentHorizontalAlignment = UIControl.ContentHorizontalAlignment.center
         solveButton.contentVerticalAlignment = UIControl.ContentVerticalAlignment.top
         solveButton.titleLabel?.textAlignment = .center
+        solveButton.backgroundColor = UIColor.blue
+        solveButton.backgroundColor = .clear
+        solveButton.layer.cornerRadius = 5
+        solveButton.layer.borderWidth = 1
+        solveButton.layer.borderColor = UIColor.black.cgColor
         self.view.addSubview(solveButton)
-        
-        let verifyButton = UIButton(frame: CGRect(x: screenSize.width/2, y: screenSize.height*3/4+screenSize.width/8, width: screenSize.width/2, height: screenSize.width/4))
         
         verifyButton.backgroundColor = UIColor.white
         verifyButton.setTitle("Verify", for: .normal)
@@ -177,11 +205,12 @@ class ViewController: UIViewController
         verifyButton.contentHorizontalAlignment = UIControl.ContentHorizontalAlignment.center
         verifyButton.contentVerticalAlignment = UIControl.ContentVerticalAlignment.top
         verifyButton.titleLabel?.textAlignment = .center
+        verifyButton.backgroundColor = UIColor.green
+        verifyButton.backgroundColor = .clear
+        verifyButton.layer.cornerRadius = 5
+        verifyButton.layer.borderWidth = 1
+        verifyButton.layer.borderColor = UIColor.black.cgColor
         self.view.addSubview(verifyButton)
-        
-        
-        
-        
     }
     func display()
     {
@@ -224,18 +253,31 @@ class ViewController: UIViewController
     }
     @objc func doSolve(sender: UIButton!)
     {
-        solve()
+        if(validStart())
+        {
+            solve()
+        }
+        else
+        {
+            alertLabel.text = "Invalid Start Conditions"
+            print("Invalid Start Conditions")
+            verifyStart3x3 = true
+            verifyStartRows = true
+            verifyStartCols = true
+        }
         display()
     }
     @objc func doVerify(sender: UIButton!)
     {
         print("Columns:" + String(verifyStartCols))
         print("Rows:\t" + String(verifyStartRows))
-        //        checkStart3x3()
+        print("3x3:\t" + String(verifyStart3x3))
+        checkStart3x3()
         checkStartRows()
         checkStartCols()
         print("Columns:" + String(verifyStartCols))
         print("Rows:\t" + String(verifyStartRows))
+        print("3x3:\t" + String(verifyStart3x3))
         print()
         
         display()
@@ -251,11 +293,11 @@ class ViewController: UIViewController
             if(verifyRows && verifyCols && verify3x3)
             {
                 
-                sender.setTitle("Verify\n\nValid Solution.", for: .normal)
+                alertLabel.text = "Valid Solution."
             }
             else
             {
-                sender.setTitle("Verify\n\nInvalid Solution.", for: .normal)
+                alertLabel.text = "Invalid Solution."
             }
 //            for i in 0...8
 //            {
@@ -271,7 +313,7 @@ class ViewController: UIViewController
         }
         else
         {
-            sender.setTitle("Verify\n\nSudoku not filled.", for: .normal)
+            alertLabel.text = "Sudoku not filled."
             arrayFull = true
             verifyStartRows = true
             verifyStartCols = true
@@ -426,14 +468,18 @@ class ViewController: UIViewController
         {
             for j in 0...2
             {
-                var tempArray = [0,0,0,0,0,0,0,0,0]
+                var tempArray = [Int]()
                 var count = 0
                 for i in 0...2//(0 + 3*m)...(2 + 3*m)
                 {
                     for k in 0...2//(0 + 3*j)...(2 + 3*j)
                     {
-                        tempArray[count] = Int(myArray[k + 3*j][i + 3*m])!
-                        count+=1
+                        if(buttonsArray[i + 3*m + 9*(k + 3*j)].backgroundColor == UIColor.green)
+                        {
+                            tempArray.append(Int(myArray[k + 3*j][i + 3*m])!)
+                            count+=1
+                        }
+                        
                     }
                 }
                 //                for f in 0...8
@@ -442,18 +488,12 @@ class ViewController: UIViewController
                 //                }
                 //                print()
                 tempArray.sort()
-                for f in 0...8
+                // Remove duplicates from these example numbers.
+                let unique3x3 = removeDuplicateInts(values: tempArray)
+                if(tempArray.count != unique3x3.count)
                 {
-                    //                    print(String(tempArray[f]) + ", ", terminator:"")
-                    if(tempArray[f] != f+1)
-                    {
-                        verify3x3 = false
-                        //                        print("m: " + String(m))
-                        //                        print("j: " + String(j))
-                    }
+                    verifyStart3x3 = false
                 }
-                //                print()
-                //                print()
             }
         }
     }
@@ -485,14 +525,10 @@ class ViewController: UIViewController
     }
     func validStart() -> Bool
     {
-        print("Columns: " + String(verifyStartCols))
-        print("Rows: " + String(verifyStartRows))
-//        checkStart3x3()
-        checkStartRows()
+        checkStart3x3()
         checkStartCols()
-        print("Columns: " + String(verifyStartCols))
-        print("Rows: " + String(verifyStartRows))
-        if(verifyStart3x3&&verifyStartCols&&verifyRows)
+        checkStartRows()
+        if(verifyStart3x3&&verifyStartCols&&verifyStartRows)
         {
             return true
         }
