@@ -23,7 +23,7 @@ let screenSize: CGRect = UIScreen.main.bounds
 let setWidth = Int(screenSize.width)
 let setHeight = Int(screenSize.width)
 
-let startHeight = 100
+let startHeight = Int(screenSize.height*0.135869565)
 var verifyRows = true
 var verifyCols = true
 var verify3x3 = true
@@ -44,28 +44,7 @@ var myArray = [
     [" ", " ", " ", " ", " ", " ", " ", " ", " "],
     [" ", " ", " ", " ", " ", " ", " ", " ", " "]
 ]
-//var myArray = [
-//    ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
-//    ["2", "3", "4", "5", "6", "7", "8", "9", "1"],
-//    ["3", "4", "5", "6", "7", "8", "9", "1", "2"],
-//    ["4", "5", "6", "7", "8", "9", "1", "2", "3"],
-//    ["5", "6", "7", "8", "9", "1", "2", "3", "4"],
-//    ["6", "7", "8", "9", "1", "2", "3", "4", "5"],
-//    ["7", "8", "9", "1", "2", "3", "4", "5", "6"],
-//    ["8", "9", "1", "2", "3", "4", "5", "6", "7"],
-//    ["9", "1", "2", "3", "4", "5", "6", "7", "8"]
-//]
-//var myArray = [
-//    ["1", "2", "3", "1", "4", "7", "1", "4", "7"],
-//    ["4", "5", "6", "2", "5", "8", "2", "5", "8"],
-//    ["7", "8", "9", "3", "6", "9", "3", "6", "9"],
-//    ["1", "2", "3", "1", "4", "7", "1", "4", "7"],
-//    ["4", "5", "6", "2", "5", "8", "2", "5", "8"],
-//    ["7", "8", "9", "3", "6", "9", "3", "6", "9"],
-//    ["1", "2", "3", "1", "4", "7", "1", "4", "7"],
-//    ["4", "5", "6", "2", "5", "8", "2", "5", "8"],
-//    ["7", "8", "9", "3", "6", "9", "3", "6", "9"]
-//]
+
 //var myArray = [
 //    ["4", "3", "5", "2", "6", "9", "7", "8", "1"],
 //    ["6", "8", "2", "5", "7", "1", "4", "9", "3"],
@@ -80,16 +59,18 @@ var myArray = [
 class ViewController: UIViewController
 {
     var buttonsArray = [UIButton]()
-    let resetButton = UIButton(frame: CGRect(x: screenSize.width/2, y: screenSize.height*3/4, width: screenSize.width/2, height: screenSize.width/8))
-    let solveButton = UIButton(frame: CGRect(x: screenSize.width/2, y: screenSize.height*3/4 + screenSize.width/8, width: screenSize.width/2, height: screenSize.width/8))
-    let verifyButton = UIButton(frame: CGRect(x: screenSize.width/2, y: screenSize.height*3/4 + screenSize.width/4, width: screenSize.width/2, height: screenSize.width/8))
+    let resetButton = UIButton(frame: CGRect(x: screenSize.width/2, y: CGFloat(startHeight)+screenSize.width, width: screenSize.width/2, height: (screenSize.height-(CGFloat(startHeight)+screenSize.width))/3))
+    let solveButton = UIButton(frame: CGRect(x: screenSize.width/2, y: CGFloat(startHeight)+screenSize.width + (screenSize.height-(CGFloat(startHeight)+screenSize.width))/3, width: screenSize.width/2, height: (screenSize.height-(CGFloat(startHeight)+screenSize.width))/3))
+    let verifyButton = UIButton(frame: CGRect(x: screenSize.width/2, y: CGFloat(startHeight)+screenSize.width + (screenSize.height-(CGFloat(startHeight)+screenSize.width))*2/3, width: screenSize.width/2, height: (screenSize.height-(CGFloat(startHeight)+screenSize.width))/3))
     let sudoLabel = UILabel(frame: CGRect(x: 0, y: 0, width: Int(screenSize.width), height: startHeight))
-    let alertLabel = UILabel(frame: CGRect(x: 0, y: Int(screenSize.height*3/4), width: Int(screenSize.width/2), height: Int(screenSize.width*3/8)))
+    let alertLabel = UILabel(frame: CGRect(x: 0, y: Int(CGFloat(startHeight)+screenSize.width), width: Int(screenSize.width/2), height: Int(screenSize.height - (CGFloat(startHeight)+screenSize.width))))
     
     override func viewDidLoad()
     {
         super.viewDidLoad()
         print("Test")
+        print("Width in pixels: " + String(Int(screenSize.width)))
+        print("Height in pixels: " + String(Int(screenSize.height)))
         // Do any additional setup after loading the view, typically from a nib.
         for i in 0...9
         {
@@ -123,6 +104,7 @@ class ViewController: UIViewController
             layer.fillColor = UIColor.black.cgColor
             view.layer.addSublayer(layer)
         }
+        // Generates 9x9 grid of buttons
         for i in 0...8
         {
             for j in 0...8
@@ -133,7 +115,7 @@ class ViewController: UIViewController
                 button.setTitle(myArray[j][i], for: .normal)
                 button.setTitleColor(UIColor.black, for: .normal)
                 button.addTarget(self, action: #selector(buttonAction), for: .touchUpInside)
-//
+                
                 self.view.addSubview(button)
                 self.buttonsArray.append(button)
             }
@@ -225,12 +207,8 @@ class ViewController: UIViewController
                     buttonsArray[counter].backgroundColor = UIColor.white
                 }
                 counter+=1
-                //            self.view.addSubview(buttonsArray[i])
-                
-                //                self.view.addSubview(button)
             }
         }
-//        print("Display Updated.")
     }
     @objc func reset()
     {
@@ -238,6 +216,7 @@ class ViewController: UIViewController
         {
             for j in 0...8
             {
+                // Option to only reset non-green squares
 //                if(buttonsArray[i + 9*j].backgroundColor == UIColor.green)
 //                {
 //
@@ -307,30 +286,17 @@ class ViewController: UIViewController
             }
             print("Done Calculating")
             
-//            Non-thread code
-//            checkRows()
-//            checkCols()
-//            check3x3()
             print(verify3x3)
             print(verifyRows)
             print(verifyCols)
             if(verifyRows && verifyCols && verify3x3)
             {
-                
                 alertLabel.text = "Valid Solution."
             }
             else
             {
                 alertLabel.text = "Invalid Solution."
             }
-//            for i in 0...8
-//            {
-//                for j in 0...8
-//                {
-//                    print(myArray[j][i] + ", ", terminator:"")
-//                }
-//                print("\n")
-//            }
             verifyRows = true
             verifyCols = true
             verify3x3 = true
@@ -403,32 +369,22 @@ class ViewController: UIViewController
             {
                 var tempArray = [0,0,0,0,0,0,0,0,0]
                 var count = 0
-                for i in 0...2//(0 + 3*m)...(2 + 3*m)
+                for i in 0...2
                 {
-                    for k in 0...2//(0 + 3*j)...(2 + 3*j)
+                    for k in 0...2
                     {
                         tempArray[count] = Int(myArray[k + 3*j][i + 3*m])!
                         count+=1
                     }
                 }
-                //                for f in 0...8
-                //                {
-                //                    print(String(tempArray[f]) + ", ", terminator:"")
-                //                }
-                //                print()
                 tempArray.sort()
                 for f in 0...8
                 {
-                    //                    print(String(tempArray[f]) + ", ", terminator:"")
                     if(tempArray[f] != f+1)
                     {
                         verify3x3 = false
-                        //                        print("m: " + String(m))
-                        //                        print("j: " + String(j))
                     }
                 }
-                //                print()
-                //                print()
             }
         }
     }
@@ -506,11 +462,6 @@ class ViewController: UIViewController
                         
                     }
                 }
-                //                for f in 0...8
-                //                {
-                //                    print(String(tempArray[f]) + ", ", terminator:"")
-                //                }
-                //                print()
                 tempArray.sort()
                 // Remove duplicates from these example numbers.
                 let unique3x3 = removeDuplicateInts(values: tempArray)
@@ -631,7 +582,6 @@ class ViewController: UIViewController
     }
     @objc func buttonAction(sender: UIButton!)
     {
-        
         if(sender.titleLabel!.text == " ")
         {
             sender.setTitle("1", for: .normal)
@@ -647,20 +597,26 @@ class ViewController: UIViewController
                 sender.setTitle(" ", for: .normal)
             }
         }
-        myArray[Int(sender.frame.minX)%Int(screenSize.width/9 - 1)-1][(Int(sender.frame.minY)-startHeight)%Int(screenSize.width/9 - 1)-1] = sender.titleLabel!.text!
-        if(myArray[Int(sender.frame.minX)%Int(screenSize.width/9 - 1)-1][(Int(sender.frame.minY)-startHeight)%Int(screenSize.width/9 - 1)-1] == " ")
+        //x: screenSize.width/9*CGFloat(i)+1
+        
+        //y: screenSize.width/9*CGFloat(j) + CGFloat(startHeight) + 1,
+        
+        var buttonWidth = sender.frame.maxX - sender.frame.minX
+        var xCoord = Int(sender.frame.minX)/Int(buttonWidth)
+        var yCoord = (Int(sender.frame.minY)-startHeight)/Int(buttonWidth)
+        print("X:" + String(Int(sender.frame.minX)/Int(buttonWidth)))
+        print("Y: " + String((Int(sender.frame.minY)-startHeight)/Int(buttonWidth)))
+        myArray[xCoord][yCoord] = sender.titleLabel!.text!
+
+//        myArray[Int(sender.frame.minX)%Int(screenSize.width/9 - 1)-1][(Int(sender.frame.minY)-startHeight)%Int(screenSize.width/9 - 1)-1] = sender.titleLabel!.text!
+        if(sender.titleLabel!.text == " ")
         {
-            buttonsArray[(Int(sender.frame.minY)-startHeight)%Int(screenSize.width/9 - 1)-1 + 9*(Int(sender.frame.minX)%Int(screenSize.width/9 - 1)-1)].backgroundColor = UIColor.white
+            sender.backgroundColor = UIColor.white
         }
         else
         {
-            buttonsArray[(Int(sender.frame.minY)-startHeight)%Int(screenSize.width/9 - 1)-1 + 9*(Int(sender.frame.minX)%Int(screenSize.width/9 - 1)-1)].backgroundColor = UIColor.green
+            sender.backgroundColor = UIColor.green
         }
-//        print("Button Pressed.\n")
-//        print("X Coord: " + String(Int(sender.frame.minX)%Int(screenSize.width/9 - 1)))
-//        print("Y Coord: " + String((Int(sender.frame.minY)-startHeight)%Int(screenSize.width/9 - 1)))
-        //        print(String(Int(screenSize.width/45)))
-        //        print(String(Int(screenSize.width/9 - 1)))
     }
 }
 
